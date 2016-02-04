@@ -27,12 +27,17 @@ function vModalFactory ($animate, $compile, $rootScope, $controller, $q, $http, 
     if (config.template) {
       html = $q.when(config.template);
     } else {
-      html = $http.get(config.templateUrl, {
-        cache: $templateCache
-      }).
-      then(function (response) {
-        return response.data;
-      });
+      var checkTemplateCache = $templateCache.get(config.templateUrl)[1];
+      if(checkTemplateCache != '') {
+        html = $q.when(checkTemplateCache);
+      } else {
+        html = $http.get(config.templateUrl, {
+          cache: $templateCache
+        }).
+        then(function (response) {
+          return response.data;
+        });
+      }
     }
 
     function activate (locals) {
